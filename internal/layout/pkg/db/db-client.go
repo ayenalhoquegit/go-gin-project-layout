@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	//"github.com/ayenalhoquegit/go-gin-project-layout/pkg/config"
 	"github.com/go-sql-driver/mysql"
 )
 
@@ -17,10 +18,10 @@ func GetDbInstance() *DbClient {
 	instance.init()
 	return instance
 }
-
+const db_user="root"
 func (d *DbClient) init() {
 	cfg := mysql.Config{
-		User:                 "root",
+		User:                 db_user,
 		Passwd:               "",
 		Net:                  "tcp",
 		Addr:                 "127.0.0.1:3306",
