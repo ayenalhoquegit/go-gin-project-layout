@@ -1,12 +1,27 @@
 package user
 
+import (
+	"log"
+	"net/http"
 
-type Handler struct{
-	service  *Service
+	"github.com/gin-gonic/gin"
+)
+
+type Handler struct {
+	service *Service
 }
-func NewHandler(s *Service) *Handler{
-	h:= new(Handler)
-	h.service=s
+
+func NewHandler(s *Service) *Handler {
+	h := new(Handler)
+	h.service = s
 	return h
 
+}
+
+func (h *Handler) FindAllUser(ctx *gin.Context) {
+	user, err := h.service.findAll()
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx.IndentedJSON(http.StatusOK, user)
 }

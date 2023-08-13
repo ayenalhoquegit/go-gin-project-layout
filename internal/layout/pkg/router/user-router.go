@@ -1,14 +1,14 @@
 package router
 
 import (
+	"github.com/ayenalhoquegit/go-gin-project-layout/internal/layout/module/user"
 	"github.com/gin-gonic/gin"
 )
 
-
-
-func RegisterUserRoutes(e *gin.Engine) {
+func RegisterUserRoutes(e *gin.Engine, module *user.Module) {
 	routes := e.Group("/api")
+	//routes := gin.Default()
 	//routes.Use(authMiddleWare.AuthUser())
-	routes.GET("/users", func(ctx *gin.Context) {})
-	
+	routes.GET("/users", module.Handler.FindAllUser)
+
 }

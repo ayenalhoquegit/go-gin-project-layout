@@ -8,16 +8,17 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-type DbClient struct{
-	db *sql.DB
+type DbClient struct {
+	DB *sql.DB
 }
-func GetDbInstance() *DbClient{
-    instance:=new(DbClient)
+
+func GetDbInstance() *DbClient {
+	instance := new(DbClient)
 	instance.init()
 	return instance
 }
 
-func(d *DbClient) init(){
+func (d *DbClient) init() {
 	cfg := mysql.Config{
 		User:                 "root",
 		Passwd:               "",
@@ -29,12 +30,12 @@ func(d *DbClient) init(){
 
 	// Get a database handle.
 	var err error
-	d.db, err = sql.Open("mysql", cfg.FormatDSN())
+	d.DB, err = sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	pingErr := d.db.Ping()
+	pingErr := d.DB.Ping()
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}

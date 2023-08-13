@@ -1,16 +1,16 @@
 package user
 
 import (
-	"github.com/ayenalhoquegit/go-gin-project-layout/internal/layout/pkg/db"
+	"database/sql"
 )
 
 type Module struct {
 	Handler    *Handler
 	Service    *Service
-	Repository *db.DbClient
+	Repository *Repo
 }
 
-func NewModule(db *db.DbClient) *Module {
+func NewModule(db *sql.DB) *Module {
 	m := new(Module)
 	m.Repository = NewRepo(db)
 	m.Service = NewService(m.Repository)
