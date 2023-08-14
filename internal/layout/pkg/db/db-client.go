@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	//"github.com/ayenalhoquegit/go-gin-project-layout/pkg/config"
+	"github.com/ayenalhoquegit/go-gin-project-layout/pkg/config"
 	"github.com/go-sql-driver/mysql"
 )
 
@@ -18,14 +18,16 @@ func GetDbInstance() *DbClient {
 	instance.init()
 	return instance
 }
-const db_user="root"
+
+//const db_user = "root"
+
 func (d *DbClient) init() {
 	cfg := mysql.Config{
-		User:                 db_user,
-		Passwd:               "",
+		User:                 config.GetEnvValue("DB_USER"),
+		Passwd:               config.GetEnvValue("DB_PASSWORD"),
 		Net:                  "tcp",
-		Addr:                 "127.0.0.1:3306",
-		DBName:               "golang_api",
+		Addr:                 config.GetEnvValue("DB_HOST"),
+		DBName:               config.GetEnvValue("DB_NAME"),
 		AllowNativePasswords: true,
 	}
 

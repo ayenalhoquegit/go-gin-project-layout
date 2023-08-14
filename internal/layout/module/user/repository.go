@@ -2,6 +2,7 @@ package user
 
 import (
 	"database/sql"
+	"log"
 
 	"github.com/ayenalhoquegit/go-gin-project-layout/internal/layout/module/user/entity"
 )
@@ -32,4 +33,40 @@ func (r *Repo) findAll() ([]entity.User, error) {
 	}
 	return user, nil
 	//c.IndentedJSON(http.StatusOK, user)
+}
+
+func (r *Repo) CreateUser(u *entity.User) error {
+	result, err := r.db.Exec("INSERT INTO users (name, email, gender) VALUES (?, ?, ?)", u.Name, u.Email, u.Gender)
+	if err != nil {
+		log.Fatal(err)
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return err
+	}
+	u.Id = int(id)
+	return nil
+}
+
+func (r *Repo) FindUser(id int) (entity.User, error) {
+	var user entity.User
+	row := r.db.QueryRow("SELECT * FROM users WHERE id = ?", id)
+	err := row.Scan(&user.Id, &user.Name, &user.Email, &user.Gender)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func (r *Repo) DeleteUser(id int) (int64, error) {
+	result, err := r.db.Exec("DELETE FROM users WHERE id = ?", id)
+	if err != nil {
+		return 0, err
+	}
+	affect, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return affect, nil
+
 }

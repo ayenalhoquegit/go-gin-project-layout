@@ -10,5 +10,8 @@ func RegisterUserRoutes(e *gin.Engine, module *user.Module) {
 	//routes := gin.Default()
 	//routes.Use(authMiddleWare.AuthUser())
 	routes.GET("/users", module.Handler.FindAllUser)
+	routes.POST("/users", module.Handler.CreateUser)
+	routes.GET("/users/:id", module.Handler.FindUser)
+	routes.DELETE("/users/:id", module.Handler.DeleteUser)
 
 }
