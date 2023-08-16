@@ -58,6 +58,20 @@ func (r *Repo) FindUser(id int) (entity.User, error) {
 	return user, nil
 }
 
+func (r *Repo) UpdateUser(id int, u *entity.User) (int64, error) {
+	result, err := r.db.Exec("UPDATE users set name=?, email=?, gender=? WHERE id=?", u.Name, u.Email, u.Gender, u.Id)
+	if err != nil {
+		return 0,err
+	}
+	affect, err := result.RowsAffected()
+	if err != nil{
+		return 0,err
+	}
+	return affect,nil
+}
+
+
+
 func (r *Repo) DeleteUser(id int) (int64, error) {
 	result, err := r.db.Exec("DELETE FROM users WHERE id = ?", id)
 	if err != nil {

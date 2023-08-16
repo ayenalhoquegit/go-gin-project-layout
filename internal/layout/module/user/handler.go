@@ -1,11 +1,11 @@
 package user
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/ayenalhoquegit/go-gin-project-layout/internal/layout/module/user/dto"
+	"github.com/ayenalhoquegit/go-gin-project-layout/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,10 +22,11 @@ func NewHandler(s *Service) *Handler {
 
 func (h *Handler) FindAllUser(ctx *gin.Context) {
 	user, err := h.service.findAll()
-	if err != nil {
-		log.Fatal(err)
+	if err != nil {	
+		response.RespondError(err.Code,err.Err,ctx)
 	}
-	ctx.IndentedJSON(http.StatusOK, user)
+	response.Respond(http.StatusOK, user,ctx)
+
 }
 
 func (h *Handler) CreateUser(ctx *gin.Context) {
@@ -35,28 +36,38 @@ func (h *Handler) CreateUser(ctx *gin.Context) {
 	}
 	user, err := h.service.CreateUser(&newUser)
 	if err != nil {
-		log.Fatal(err)
+		response.RespondError(err.Code,err.Err,ctx)
 	}
-	ctx.IndentedJSON(http.StatusOK, user)
+	response.Respond(http.StatusCreated, user, ctx)
 }
 func (h *Handler) FindUser(ctx *gin.Context) {
 	userId, _ := strconv.Atoi(ctx.Param("id"))
 	user, err := h.service.FindUser(userId)
 	if err != nil {
-		ctx.IndentedJSON(http.StatusNotFound, gin.H{"message": "user not found"})
+		response.RespondError(err.Code,err.Err,ctx)
 	}
-	ctx.IndentedJSON(http.StatusOK, user)
+	response.Respond(http.StatusOK, user, ctx)
+}
+
+func (h *Handler) UpdateUser(ctx *gin.Context) {
+	userId, _ := strconv.Atoi(ctx.Param("id"))
+	var newUser dto.UserDto
+	if err := ctx.BindJSON(&newUser); err != nil {
+		return
+	}
+	user, err := h.service.UpdateUser(userId, &newUser)
+	if err != nil {
+		response.RespondError(err.Code,err.Err,ctx)
+	}
+	response.Respond(http.StatusOK, user, ctx)
 }
 
 func (h *Handler) DeleteUser(ctx *gin.Context) {
 	userId, _ := strconv.Atoi(ctx.Param("id"))
-	affect, err := h.service.DeleteUser(userId)
+	affectedRows, err := h.service.DeleteUser(userId)
 	if err != nil {
-		ctx.IndentedJSON(http.StatusNotFound, gin.H{"message": "user not found"})
+		response.RespondError(err.Code,err.Err,ctx)
 	}
-	if affect > 0 {
-		ctx.IndentedJSON(http.StatusOK, gin.H{"message": "user deleted"})
-	} else {
-		ctx.IndentedJSON(http.StatusNotFound, gin.H{"message": "user not found"})
-	}
+	response.Respond(http.StatusOK, affectedRows, ctx)
+	
 }
