@@ -28,7 +28,7 @@ func (r *Repo) findAll() ([]entity.User, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var u entity.User
-		rows.Scan(&u.Id, &u.Name, &u.Email, &u.Gender)
+		rows.Scan(&u.Id, &u.Name, &u.Email, &u.Gender, &u.Password)
 		user = append(user, u)
 	}
 	return user, nil
@@ -36,7 +36,7 @@ func (r *Repo) findAll() ([]entity.User, error) {
 }
 
 func (r *Repo) CreateUser(u *entity.User) error {
-	result, err := r.db.Exec("INSERT INTO users (name, email, gender) VALUES (?, ?, ?)", u.Name, u.Email, u.Gender)
+	result, err := r.db.Exec("INSERT INTO users (name, email, gender, password) VALUES (?, ?, ?, ?)", u.Name, u.Email, u.Gender, u.Password)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,7 +51,17 @@ func (r *Repo) CreateUser(u *entity.User) error {
 func (r *Repo) FindUser(id int) (entity.User, error) {
 	var user entity.User
 	row := r.db.QueryRow("SELECT * FROM users WHERE id = ?", id)
-	err := row.Scan(&user.Id, &user.Name, &user.Email, &user.Gender)
+	err := row.Scan(&user.Id, &user.Name, &user.Email, &user.Gender, &user.Password)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func (r *Repo) FindUserByEmail(email string) (entity.User, error) {
+	var user entity.User
+	row := r.db.QueryRow("SELECT * FROM users WHERE email = ?", email)
+	err := row.Scan(&user.Id, &user.Name, &user.Email, &user.Gender, &user.Password)
 	if err != nil {
 		return user, err
 	}
@@ -61,16 +71,14 @@ func (r *Repo) FindUser(id int) (entity.User, error) {
 func (r *Repo) UpdateUser(id int, u *entity.User) (int64, error) {
 	result, err := r.db.Exec("UPDATE users set name=?, email=?, gender=? WHERE id=?", u.Name, u.Email, u.Gender, u.Id)
 	if err != nil {
-		return 0,err
+		return 0, err
 	}
 	affect, err := result.RowsAffected()
-	if err != nil{
-		return 0,err
+	if err != nil {
+		return 0, err
 	}
-	return affect,nil
+	return affect, nil
 }
-
-
 
 func (r *Repo) DeleteUser(id int) (int64, error) {
 	result, err := r.db.Exec("DELETE FROM users WHERE id = ?", id)

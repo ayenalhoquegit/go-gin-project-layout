@@ -1,6 +1,7 @@
 package layout
 
 import (
+	"github.com/ayenalhoquegit/go-gin-project-layout/internal/layout/module/auth"
 	"github.com/ayenalhoquegit/go-gin-project-layout/internal/layout/module/user"
 	"github.com/ayenalhoquegit/go-gin-project-layout/internal/layout/pkg"
 	"github.com/ayenalhoquegit/go-gin-project-layout/internal/layout/pkg/db"
@@ -11,6 +12,7 @@ type App struct {
 	DBClient   *db.DbClient
 	gin        *pkg.Gin
 	UserModule *user.Module
+	AuthModule *auth.Module
 }
 
 func NewApp() *App {
@@ -25,10 +27,12 @@ func (a *App) initDB() {
 
 func (a *App) initModules() {
 	a.UserModule = user.NewModule(a.DBClient.DB)
+	a.AuthModule = auth.NewModule(a.UserModule.Service)
 }
 
 func (a *App) initModuleRouters() {
 	router.RegisterUserRoutes(a.gin.Engine, a.UserModule)
+	router.RegisterAuthRoutes(a.gin.Engine, a.AuthModule)
 }
 
 func (a *App) initComponent() {

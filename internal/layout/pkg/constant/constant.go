@@ -9,7 +9,8 @@ const InternalServerError = "internal server error"
 const BadRequest = "bad request"
 const Error = "error"
 const OperationNotSuccess = "operation was not successful"
-const NotFound="Not found"
+const NotFound = "Not found"
 
 // module route
 const UserRouteName = "/users"
+const AuthRouteName = "/auth"
