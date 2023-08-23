@@ -5,13 +5,13 @@ import (
 )
 
 type Module struct {
-	Service *user.Service
+	Service *AuthService
 	Handler *Handler
 }
 
-func NewModule(service *user.Service) *Module {
+func NewModule(s *user.Service) *Module {
 	m := new(Module)
-	m.Service = service
-	m.Handler = NewHandler(m.Service)
+	m.Service = NewService(s)
+	m.Handler = NewHandler(s)
 	return m
 }
